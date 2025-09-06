@@ -1,0 +1,875 @@
+{% extends "base.html" %}
+
+{% block title %}Busca Avançada - Associação Amigo do Povo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 text-center mb-4">
+                <i class="fas fa-search text-primary"></i>
+                Busca Avançada
+            </h1>
+            <p class="text-muted text-center">Encontre alunos usando critérios específicos de busca</p>
+        </div>
+    </div>
+
+    <!-- Filtros de Busca -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter me-2"></i>
+                        Critérios de Busca
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" id="formBuscaAvancada">
+                        <!-- Informações Básicas -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-user me-2"></i>
+                                    Informações Básicas
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="nome" class="form-label">Nome (parcial)</label>
+                                <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite parte do nome">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="idade_min" class="form-label">Faixa de Idade</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" class="form-control" id="idade_min" name="idade_min" placeholder="Min" min="0" max="120">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control" id="idade_max" name="idade_max" placeholder="Max" min="0" max="120">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="sexo" class="form-label">Sexo</label>
+                                <select class="form-select" id="sexo" name="sexo">
+                                    <option value="">Todos</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
+                                    <option value="O">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="estado_civil" class="form-label">Estado Civil</label>
+                                <select class="form-select" id="estado_civil" name="estado_civil">
+                                    <option value="">Todos</option>
+                                    <option value="Solteiro">Solteiro</option>
+                                    <option value="Casado">Casado</option>
+                                    <option value="Divorciado">Divorciado</option>
+                                    <option value="Viúvo">Viúvo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="data_cadastro_inicio" class="form-label">Data de Cadastro</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="date" class="form-control" id="data_cadastro_inicio" name="data_cadastro_inicio">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="date" class="form-control" id="data_cadastro_fim" name="data_cadastro_fim">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Atividade e Turma -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-dumbbell me-2"></i>
+                                    Atividade e Turma
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="atividade" class="form-label">Atividade</label>
+                                <select class="form-select" id="atividade" name="atividade">
+                                    <option value="">Todas</option>
+                                    <option value="Futebol">Futebol</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Jiu-Jitsu">Jiu-Jitsu</option>
+                                    <option value="Capoeira">Capoeira</option>
+                                    <option value="Musculação">Musculação</option>
+                                    <option value="Aeróbico">Aeróbico</option>
+                                    <option value="Dança">Dança</option>
+                                    <option value="Yoga">Yoga</option>
+                                    <option value="Pilates">Pilates</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="turma" class="form-label">Turma/Horário</label>
+                                <select class="form-select" id="turma" name="turma">
+                                    <option value="">Todas</option>
+                                    <option value="Manhã">Manhã</option>
+                                    <option value="Tarde">Tarde</option>
+                                    <option value="Noite">Noite</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="">Todos</option>
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Inativo">Inativo</option>
+                                    <option value="Suspenso">Suspenso</option>
+                                    <option value="Transferido">Transferido</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Localização -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    Localização
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="bairro" class="form-label">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Nome do bairro">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Nome da cidade">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="">Todos</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Frequência -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-calendar-check me-2"></i>
+                                    Frequência
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="taxa_frequencia_min" class="form-label">Taxa de Frequência</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" class="form-control" id="taxa_frequencia_min" name="taxa_frequencia_min" placeholder="Min %" min="0" max="100">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control" id="taxa_frequencia_max" name="taxa_frequencia_max" placeholder="Max %" min="0" max="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ultima_presenca" class="form-label">Última Presença</label>
+                                <select class="form-select" id="ultima_presenca" name="ultima_presenca">
+                                    <option value="">Qualquer data</option>
+                                    <option value="hoje">Hoje</option>
+                                    <option value="semana">Esta semana</option>
+                                    <option value="mes">Este mês</option>
+                                    <option value="30_dias">Últimos 30 dias</option>
+                                    <option value="60_dias">Últimos 60 dias</option>
+                                    <option value="90_dias">Últimos 90 dias</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="status_frequencia" class="form-label">Status da Frequência</label>
+                                <select class="form-select" id="status_frequencia" name="status_frequencia">
+                                    <option value="">Todos</option>
+                                    <option value="Dados disponíveis">Dados disponíveis</option>
+                                    <option value="Aguardando dados">Aguardando dados</option>
+                                    <option value="Sem dados">Sem dados</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-lg btn-primary">
+                                    <i class="fas fa-search me-2"></i>
+                                    Realizar Busca
+                                </button>
+                                <button type="button" class="btn btn-lg btn-secondary ms-3" onclick="limparFiltros()">
+                                    <i class="fas fa-eraser me-2"></i>
+                                    Limpar Filtros
+                                </button>
+                                <button type="button" class="btn btn-lg btn-success ms-3" onclick="salvarBusca()">
+                                    <i class="fas fa-save me-2"></i>
+                                    Salvar Busca
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados da Busca -->
+    <div class="row mb-4" id="resultadosBusca" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Resultados da Busca
+                    </h5>
+                    <div>
+                        <span class="badge bg-primary" id="totalResultados">0 resultados</span>
+                        <button class="btn btn-sm btn-outline-success ms-2" onclick="exportarResultados()">
+                            <i class="fas fa-download me-1"></i>
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="tabelaResultados">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Atividade</th>
+                                    <th>Turma</th>
+                                    <th>Status</th>
+                                    <th>Taxa Frequência</th>
+                                    <th>Última Presença</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Resultados serão preenchidos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscas Salvas -->
+    <div class="row mb-4" id="buscasSalvas" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bookmark me-2"></i>
+                        Buscas Salvas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="listaBuscasSalvas">
+                        <!-- Buscas salvas serão preenchidas via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de Navegação -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-lg btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar ao Dashboard
+            </a>
+            <a href="{{ url_for('alunos') }}" class="btn btn-lg btn-outline-secondary ms-3">
+                <i class="fas fa-users me-2"></i>
+                Ver Todos os Alunos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Máscaras para campos
+document.addEventListener('DOMContentLoaded', function() {
+    // Máscara para CPF
+    const cpfInput = document.getElementById('cpf');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Definir datas padrão
+    const hoje = new Date();
+    const dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    
+    document.getElementById('data_cadastro_inicio').value = dataInicio.toISOString().split('T')[0];
+    document.getElementById('data_cadastro_fim').value = hoje.toISOString().split('T')[0];
+
+    // Carregar buscas salvas
+    carregarBuscasSalvas();
+});
+
+// Realizar busca
+document.getElementById('formBuscaAvancada').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Coletar dados do formulário
+    const dadosBusca = new FormData(this);
+    const parametros = new URLSearchParams();
+    
+    for (let [key, value] of dadosBusca.entries()) {
+        if (value) {
+            parametros.append(key, value);
+        }
+    }
+    
+    // Simular busca (aqui você implementaria a chamada real para o backend)
+    realizarBusca(parametros);
+});
+
+// Função para realizar busca
+function realizarBusca(parametros) {
+    // Mostrar indicador de carregamento
+    const btnBuscar = document.querySelector('button[type="submit"]');
+    const textoOriginal = btnBuscar.innerHTML;
+    btnBuscar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Buscando...';
+    btnBuscar.disabled = true;
+    
+    // Preparar dados do formulário
+    var formData = new FormData(document.getElementById('formBuscaAvancada'));
+    
+    // Fazer requisição AJAX para o backend
+    fetch('/busca_avancada', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Exibir resultados
+            exibirResultados(data.resultados);
+            
+            // Exibir estatísticas se disponíveis
+            if (data.total_alunos !== undefined) {
+                exibirEstatisticas(data);
+            }
+        } else {
+            // Exibir erro
+            alert('Erro na busca: ' + (data.message || 'Erro desconhecido'));
+            document.getElementById('resultadosBusca').style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Erro na busca:', error);
+        alert('Erro ao realizar busca. Tente novamente.');
+        document.getElementById('resultadosBusca').style.display = 'none';
+    })
+    .finally(() => {
+        // Restaurar botão
+        btnBuscar.innerHTML = textoOriginal;
+        btnBuscar.disabled = false;
+    });
+}
+
+// Exibir estatísticas da busca
+function exibirEstatisticas(data) {
+    document.getElementById('total-alunos').textContent = data.total_alunos || 0;
+    document.getElementById('total-aniversariantes').textContent = data.total_aniversariantes || 0;
+    document.getElementById('total-atividades').textContent = data.total_atividades || 0;
+    
+    // Exibir atividades encontradas
+    const atividadesContainer = document.getElementById('atividades-encontradas');
+    atividadesContainer.innerHTML = '';
+    
+    if (data.atividades_encontradas && data.atividades_encontradas.length > 0) {
+        data.atividades_encontradas.forEach(atividade => {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary me-1';
+            badge.textContent = atividade.nome + ' (' + atividade.quantidade + ')';
+            atividadesContainer.appendChild(badge);
+        });
+    } else {
+        atividadesContainer.innerHTML = '<span class="text-muted">Nenhuma atividade encontrada</span>';
+    }
+}
+
+// Variável global para armazenar os últimos resultados
+let ultimosResultados = [];
+
+// Exibir resultados da busca
+function exibirResultados(resultados) {
+    ultimosResultados = resultados;
+    var tbody = document.querySelector('#tabelaResultados tbody');
+    tbody.innerHTML = '';
+    
+    resultados.forEach((aluno, index) => {
+        // Calcular idade a partir da data de nascimento
+        var idade = '';
+        if (aluno.data_nascimento) {
+            var nascimento = new Date(aluno.data_nascimento);
+            var hoje = new Date();
+            var idadeCalculada = hoje.getFullYear() - nascimento.getFullYear();
+            var mesAtual = hoje.getMonth();
+            var mesNascimento = nascimento.getMonth();
+            
+            if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                idade = (idadeCalculada - 1) + ' anos';
+            } else {
+                idade = idadeCalculada + ' anos';
+            }
+        } else {
+            idade = 'Não informado';
+        }
+        
+        var row = document.createElement('tr');
+        row.innerHTML = '
+            <td>' + aluno.nome + '</td>
+            <td>' + idade + '</td>
+            <td>' + (aluno.atividade || 'Não informado') + '</td>
+            <td>' + (aluno.turma || 'Não informado') + '</td>
+            <td><span class="badge bg-success">' + (aluno.status_frequencia || 'Não informado') + '</span></td>
+            <td>' + (aluno.taxa_frequencia || 'N/A') + '%</td>
+            <td>' + formatarData(aluno.data_cadastro) + '</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="verDetalhes(' + index + ')">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" onclick="editarAluno(\'' + aluno.nome + '\')">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </td>
+        ';
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('totalResultados').textContent = resultados.length + ' resultados';
+    document.getElementById('resultadosBusca').style.display = 'block';
+}
+
+// Limpar filtros
+function limparFiltros() {
+    document.getElementById('formBuscaAvancada').reset();
+    
+    // Redefinir datas padrão
+    var hoje = new Date();
+    var dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    
+    document.getElementById('data_cadastro_inicio').value = dataInicio.toISOString().split('T')[0];
+    document.getElementById('data_cadastro_fim').value = hoje.toISOString().split('T')[0];
+    
+    // Ocultar resultados
+    document.getElementById('resultadosBusca').style.display = 'none';
+}
+
+// Salvar busca
+function salvarBusca() {
+    const nomeBusca = prompt('Digite um nome para salvar esta busca:');
+    if (nomeBusca && nomeBusca.trim()) {
+        const descricao = prompt('Digite uma descrição (opcional):') || '';
+        
+        // Coletar critérios atuais do formulário
+        var form = document.getElementById('formBuscaAvancada');
+        var formData = new FormData(form);
+        var criterios = {};
+        
+        for (let [key, value] of formData.entries()) {
+            if (value && value.trim()) {
+                criterios[key] = value.trim();
+            }
+        }
+        
+        if (Object.keys(criterios).length === 0) {
+            mostrarToast('Preencha pelo menos um critério de busca antes de salvar.', 'warning');
+            return;
+        }
+        
+        // Enviar para o backend
+        fetch('/salvar_busca', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nome: nomeBusca.trim(),
+                descricao: descricao.trim(),
+                criterios: criterios
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.message, 'success');
+                carregarBuscasSalvas();
+            } else {
+                mostrarToast(data.message || 'Erro ao salvar busca', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao salvar busca:', error);
+            mostrarToast('Erro ao salvar busca. Tente novamente.', 'error');
+        });
+    }
+}
+
+// Carregar buscas salvas
+function carregarBuscasSalvas() {
+    fetch('/listar_buscas_salvas')
+        .then(response => response.json())
+        .then(data => {
+            var container = document.getElementById('listaBuscasSalvas');
+            container.innerHTML = '';
+            
+            if (data.success && data.buscas && data.buscas.length > 0) {
+                data.buscas.forEach(busca => {
+                    var card = document.createElement('div');
+                    card.className = 'col-md-4 mb-3';
+                    card.innerHTML = '
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">' + busca.nome + '</h6>
+                                <p class="card-text text-muted">' + busca.descricao + '</p>
+                                <small class="text-muted d-block mb-2">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Criada: ' + busca.data_criacao + '
+                                    ' + (busca.data_ultima_execucao ? '<br><i class="fas fa-clock me-1"></i>Última execução: ' + busca.data_ultima_execucao : '') + '
+                                </small>
+                                <button class="btn btn-sm btn-primary" onclick="executarBuscaSalva(' + busca.id + ')">
+                                    <i class="fas fa-play me-1"></i>
+                                    Executar
+                                </button>
+                                <button class="btn btn-sm btn-danger ms-2" onclick="excluirBusca(' + busca.id + ', \'' + busca.nome + '\')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ';
+                    container.appendChild(card);
+                });
+                
+                document.getElementById('buscasSalvas').style.display = 'block';
+            } else {
+                // Mostrar mensagem quando não há buscas salvas
+                container.innerHTML = '
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Nenhuma busca salva encontrada. Realize uma busca e clique em "Salvar Busca" para começar.
+                        </div>
+                    </div>
+                ';
+                document.getElementById('buscasSalvas').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar buscas salvas:', error);
+            mostrarToast('Erro ao carregar buscas salvas', 'error');
+        });
+}
+
+// Executar busca salva
+function executarBuscaSalva(buscaId) {
+    // Mostrar loading
+    var btnExecutar = event.target;
+    var textoOriginal = btnExecutar.innerHTML;
+    btnExecutar.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Executando...';
+    btnExecutar.disabled = true;
+    
+    fetch('/executar_busca_salva/' + buscaId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Preencher o formulário com os critérios da busca salva
+            if (data.criterios) {
+                var form = document.getElementById('formBuscaAvancada');
+                // Limpar formulário primeiro
+                form.reset();
+                
+                // Preencher com os critérios salvos
+                Object.keys(data.criterios).forEach(key => {
+                    var input = form.querySelector('[name="' + key + '"]');
+                    if (input) {
+                        input.value = data.criterios[key];
+                    }
+                });
+            }
+            
+            // Executar a busca com os critérios carregados
+            realizarBusca();
+            
+            // Recarregar buscas salvas para atualizar data de última execução
+            carregarBuscasSalvas();
+            
+            mostrarToast('Busca executada com sucesso!', 'success');
+        } else {
+            mostrarToast(data.message || 'Erro ao executar busca salva', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao executar busca salva:', error);
+        mostrarToast('Erro ao executar busca salva. Tente novamente.', 'error');
+    })
+    .finally(() => {
+        // Restaurar botão
+        btnExecutar.innerHTML = textoOriginal;
+        btnExecutar.disabled = false;
+    });
+}
+
+// Excluir busca salva
+function excluirBusca(buscaId, nomeBusca) {
+    if (confirm('Tem certeza que deseja excluir a busca "' + nomeBusca + '"?')) {
+        fetch('/excluir_busca_salva/' + buscaId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarToast(data.message, 'success');
+                carregarBuscasSalvas();
+            } else {
+                mostrarToast(data.message || 'Erro ao excluir busca', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao excluir busca:', error);
+            mostrarToast('Erro ao excluir busca. Tente novamente.', 'error');
+        });
+    }
+}
+
+// Exportar resultados
+function exportarResultados() {
+    if (!ultimosResultados || ultimosResultados.length === 0) {
+        alert('Nenhum resultado para exportar. Realize uma busca primeiro.');
+        return;
+    }
+    
+    // Preparar dados para CSV
+    var headers = [
+        'Nome',
+        'Data de Nascimento',
+        'Idade',
+        'Telefone',
+        'Email',
+        'Endereço',
+        'Atividade',
+        'Turma',
+        'Status de Frequência',
+        'Data de Cadastro',
+        'Observações'
+    ];
+    
+    var csvContent = headers.join(',') + '\n';
+    
+    ultimosResultados.forEach(aluno => {
+        // Calcular idade
+        var idade = '';
+        if (aluno.data_nascimento) {
+            var nascimento = new Date(aluno.data_nascimento);
+            var hoje = new Date();
+            var idadeCalculada = hoje.getFullYear() - nascimento.getFullYear();
+            var mesAtual = hoje.getMonth();
+            var mesNascimento = nascimento.getMonth();
+            
+            if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                idade = idadeCalculada - 1;
+            } else {
+                idade = idadeCalculada;
+            }
+        }
+        
+        var row = [
+            '"' + (aluno.nome || '') + '"',
+            '"' + (aluno.data_nascimento || '') + '"',
+            '"' + idade + '"',
+            '"' + (aluno.telefone || '') + '"',
+            '"' + (aluno.email || '') + '"',
+            '"' + (aluno.endereco || '') + '"',
+            '"' + (aluno.atividade || '') + '"',
+            '"' + (aluno.turma || '') + '"',
+            '"' + (aluno.status_frequencia || '') + '"',
+            '"' + (aluno.data_cadastro || '') + '"',
+            '"' + (aluno.observacoes || '') + '"'
+        ];
+        
+        csvContent += row.join(',') + '\n';
+    });
+    
+    // Criar e baixar arquivo
+    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+        var url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        
+        // Nome do arquivo com data e hora
+        var agora = new Date();
+        var timestamp = agora.toISOString().slice(0, 19).replace(/:/g, '-');
+        link.setAttribute('download', 'busca_avancada_' + timestamp + '.csv');
+        
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Mostrar mensagem de sucesso
+        var toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-success border-0';
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = '
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Resultados exportados com sucesso! (' + ultimosResultados.length + ' registros)
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        ';
+        
+        document.body.appendChild(toast);
+        var bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        // Remove toast do DOM após ser fechado
+        toast.addEventListener('hidden.bs.toast', () => {
+            document.body.removeChild(toast);
+        });
+    } else {
+         alert('Seu navegador não suporta download de arquivos.');
+     }
+}
+
+// Ver detalhes do aluno
+function verDetalhes(index) {
+    var aluno = ultimosResultados[index];
+    if (!aluno) return;
+    
+    var modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Aluno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Informações Pessoais</h6>
+                            <p><strong>Nome:</strong> ' + aluno.nome + '</p>
+                            <p><strong>Data de Nascimento:</strong> ' + (aluno.data_nascimento || 'Não informado') + '</p>
+                            <p><strong>Telefone:</strong> ' + (aluno.telefone || 'Não informado') + '</p>
+                            <p><strong>Email:</strong> ' + (aluno.email || 'Não informado') + '</p>
+                            <p><strong>Endereço:</strong> ' + (aluno.endereco || 'Não informado') + '</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Informações Acadêmicas</h6>
+                            <p><strong>Atividade:</strong> ' + (aluno.atividade || 'Não informado') + '</p>
+                            <p><strong>Turma:</strong> ' + (aluno.turma || 'Não informado') + '</p>
+                            <p><strong>Status de Frequência:</strong> ' + (aluno.status_frequencia || 'Não informado') + '</p>
+                            <p><strong>Data de Cadastro:</strong> ' + (aluno.data_cadastro || 'Não informado') + '</p>
+                            <p><strong>Observações:</strong> ' + (aluno.observacoes || 'Nenhuma observação') + '</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    var bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Remove modal do DOM quando fechado
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+}
+
+// Editar aluno
+function editarAluno(nome) {
+    alert('Editando aluno: ' + nome);
+    // Aqui você implementaria a lógica para editar o aluno
+}
+
+// Formatar data
+function formatarData(dataString) {
+    var data = new Date(dataString);
+    return data.toLocaleDateString('pt-BR');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Associação Amigo do Povo{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Sistema de Gestão da Associação Amigo do Povo">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Amigo do Povo">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" href="{{ url_for('static', filename='images/icons/icon-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icons/icon-192x192.png') }}">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+        .navbar-brand img {
+            height: 30px;
+            width: auto;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <img src="{{ url_for('static', filename='images/icons/icon-192x192.png') }}" alt="Logo" height="30" class="me-2">
+                Associação Amigo do Povo
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.usuario_logado %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('alunos') }}">
+                            <i class="fas fa-users me-1"></i> Alunos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('presenca') }}">
+                            <i class="fas fa-check-circle me-1"></i> Presença
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('frequencia_individual') }}">
+                            <i class="fas fa-calendar-check me-1"></i> Frequência Individual
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('busca_avancada_page') }}">
+                            <i class="fas fa-search me-1"></i> Busca Avançada
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('relatorios') }}">
+                            <i class="fas fa-chart-bar me-1"></i> Relatórios
+                        </a>
+                    </li>
+                    {% if session.usuario_nivel in ['admin', 'admin_master'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('backup_planilhas') }}">
+                            <i class="fas fa-download me-1"></i> Backup Planilhas
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.usuario_nivel in ['admin', 'admin_master'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('gerenciar_atividades') }}">
+                            <i class="fas fa-tasks me-1"></i> Gerenciar Atividades
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('gerenciar_turmas') }}">
+                            <i class="fas fa-calendar-alt me-1"></i> Gerenciar Turmas
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.usuario_nivel == 'admin_master' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('gerenciar_colaboradores') }}">
+                            <i class="fas fa-users-cog me-1"></i> Gerenciar Colaboradores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logs_atividades') }}">
+                            <i class="fas fa-history me-1"></i> Logs de Atividades
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <button id="install-button" class="btn btn-sm btn-light nav-link" style="display: none;">
+                            <i class="fas fa-download me-1"></i> Instalar App
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i> {{ session.usuario_nome or 'Usuário' }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">© 2024 Associação Amigo do Povo - Sistema de Gestão</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="mb-0">
+                        <i class="fas fa-code me-1"></i>
+                        Desenvolvido por <strong>Arabuenã</strong> 
+                        <a href="https://github.com/Arabuena" target="_blank" class="text-white text-decoration-none">
+                            <i class="fab fa-github ms-1"></i> @Arabuena
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

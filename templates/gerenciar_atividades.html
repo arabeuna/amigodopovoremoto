@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Atividades - Associacao Amigo do Povo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 text-center mb-4">
+                <i class="fas fa-dumbbell text-primary"></i>
+                Gerenciar Atividades
+            </h1>
+            <p class="text-muted text-center">Gerencie as atividades disponiveis na academia</p>
+        </div>
+    </div>
+
+    <!-- Estatisticas das Atividades -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-list fa-2x text-primary mb-2"></i>
+                    <h4 id="total-atividades">{{ atividades|length }}</h4>
+                    <p class="text-muted mb-0">Total de Atividades</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x text-success mb-2"></i>
+                    <h4 id="total-alunos-atividades">0</h4>
+                    <p class="text-muted mb-0">Total de Alunos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-chalkboard-teacher fa-2x text-info mb-2"></i>
+                    <h4 id="total-professores">0</h4>
+                    <p class="text-muted mb-0">Professores Ativos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-warning mb-2"></i>
+                    <h4 id="atividades-ativas">0</h4>
+                    <p class="text-muted mb-0">Atividades Ativas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botoes de Acao -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <button class="btn btn-lg btn-success me-3" data-bs-toggle="modal" data-bs-target="#modalNovaAtividade">
+                <i class="fas fa-plus me-2"></i>
+                Nova Atividade
+            </button>
+            <button class="btn btn-lg btn-info" data-bs-toggle="modal" data-bs-target="#modalSincronizarAtividades">
+                <i class="fas fa-sync-alt me-2"></i>
+                Sincronizar Atividades
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Atividades -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Atividades Cadastradas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if atividades %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descricao</th>
+                                    <th>Status</th>
+                                    <th>Total de Alunos</th>
+                                    <th>Professores</th>
+                                    <th>Data Criacao</th>
+                                    <th>Criado Por</th>
+                                    <th>Acoes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for nome_atividade, dados in atividades.items() %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ dados.nome }}</strong>
+                                    </td>
+                                    <td>{{ dados.descricao }}</td>
+                                    <td>
+                                        {% if dados.ativa %}
+                                        <span class="badge bg-success">Ativa</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Inativa</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ dados.total_alunos }}</span>
+                                    </td>
+                                    <td>
+                                        {% if dados.professores_vinculados %}
+                                            {% for professor in dados.professores_vinculados %}
+                                            <span class="badge bg-info me-1">{{ professor }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">Nenhum professor</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ dados.data_criacao }}</td>
+                                    <td>{{ dados.criado_por }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    onclick="editarAtividade({{ dados.nome|tojson }})"
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" 
+                                                    onclick="verDetalhesAtividade('{{ dados.nome }}')"
+                                                    title="Ver Detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" 
+                                                    onclick="gerenciarTurmas({{ dados.nome|tojson }})"
+                                                    title="Gerenciar Turmas">
+                                                <i class="fas fa-users"></i>
+                                            </button>
+                                            {% if dados.ativa %}
+                                            <button class="btn btn-sm btn-outline-warning" 
+                                                    onclick="desativarAtividade({{ dados.nome|tojson }})"
+                                                    title="Desativar">
+                                                <i class="fas fa-pause"></i>
+                                            </button>
+                                            {% else %}
+                                            <button class="btn btn-sm btn-outline-success" 
+                                                    onclick="ativarAtividade({{ dados.nome|tojson }})"
+                                                    title="Ativar">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            {% endif %}
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="excluirAtividade({{ dados.nome|tojson }})"
+                                                    title="Excluir"
+                                                    {% if dados.total_alunos > 0 %}disabled{% endif %}>
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Nenhuma atividade cadastrada no sistema.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botoes de Navegacao -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-lg btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar ao Dashboard
+            </a>
+            <a href="{{ url_for('gerenciar_turmas') }}" class="btn btn-lg btn-outline-secondary ms-3">
+                <i class="fas fa-users me-2"></i>
+                Gerenciar Turmas
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Atividade -->
+<div class="modal fade" id="modalNovaAtividade" tabindex="-1" aria-labelledby="modalNovaAtividadeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNovaAtividadeLabel">
+                    <i class="fas fa-plus me-2"></i>
+                    Nova Atividade
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formNovaAtividade" method="POST" action="{{ url_for('gerenciar_atividades') }}">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nome_atividade" class="form-label">Nome da Atividade *</label>
+                            <input type="text" class="form-control" id="nome_atividade" name="nome_atividade" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="professor" class="form-label">Professor Responsavel</label>
+                            <select class="form-select" id="professor" name="professor">
+                                <option value="">Selecione um professor</option>
+                                <option value="Professor Joao">Professor Joao</option>
+                                <option value="Professora Maria">Professora Maria</option>
+                                <option value="Professor Carlos">Professor Carlos</option>
+                                <option value="Professora Ana">Professora Ana</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="descricao_atividade" class="form-label">Descricao *</label>
+                            <textarea class="form-control" id="descricao_atividade" name="descricao_atividade" rows="3" required 
+                                      placeholder="Descreva a atividade, objetivos, publico-alvo, etc."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select class="form-select" id="categoria" name="categoria">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Esportes">Esportes</option>
+                                <option value="Danca">Danca</option>
+                                <option value="Artes Marciais">Artes Marciais</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Educacao">Educacao</option>
+                                <option value="Recreacao">Recreacao</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="idade_minima" class="form-label">Idade Minima</label>
+                            <input type="number" class="form-control" id="idade_minima" name="idade_minima" min="0" max="120">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="idade_maxima" class="form-label">Idade Maxima</label>
+                            <input type="number" class="form-control" id="idade_maxima" name="idade_maxima" min="0" max="120">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="capacidade_turma" class="form-label">Capacidade por Turma</label>
+                            <input type="number" class="form-control" id="capacidade_turma" name="capacidade_turma" min="1" max="100">
+                        </div>
+                        <div class="col-12">
+                            <label for="observacoes" class="form-label">Observacoes</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="2" 
+                                      placeholder="Observacoes adicionais sobre a atividade"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>
+                        Cadastrar Atividade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Atividade -->
+<div class="modal fade" id="modalEditarAtividade" tabindex="-1" aria-labelledby="modalEditarAtividadeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarAtividadeLabel">
+                    <i class="fas fa-edit me-2"></i>
+                    Editar Atividade
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarAtividade" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_nome_antigo" name="nome_antigo">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="edit_nome_atividade" class="form-label">Nome da Atividade *</label>
+                            <input type="text" class="form-control" id="edit_nome_atividade" name="nome_atividade" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_professor" class="form-label">Professor Responsavel</label>
+                            <select class="form-select" id="edit_professor" name="professor">
+                                <option value="">Selecione um professor</option>
+                                <option value="Professor Joao">Professor Joao</option>
+                                <option value="Professora Maria">Professora Maria</option>
+                                <option value="Professor Carlos">Professor Carlos</option>
+                                <option value="Professora Ana">Professora Ana</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="edit_descricao_atividade" class="form-label">Descricao *</label>
+                            <textarea class="form-control" id="edit_descricao_atividade" name="descricao_atividade" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_categoria" class="form-label">Categoria</label>
+                            <select class="form-select" id="edit_categoria" name="categoria">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Esportes">Esportes</option>
+                                <option value="Danca">Danca</option>
+                                <option value="Artes Marciais">Artes Marciais</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Educacao">Educacao</option>
+                                <option value="Recreacao">Recreacao</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_status" class="form-label">Status</label>
+                            <select class="form-select" id="edit_status" name="status">
+                                <option value="true">Ativa</option>
+                                <option value="false">Inativa</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Salvar Alteracoes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sincronizar Atividades -->
+<div class="modal fade" id="modalSincronizarAtividades" tabindex="-1" aria-labelledby="modalSincronizarAtividadesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSincronizarAtividadesLabel">
+                    <i class="fas fa-sync-alt me-2"></i>
+                    Sincronizar Atividades
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formSincronizarAtividades">
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Sincronização de Atividades:</strong> Esta funcionalidade permite migrar alunos entre atividades em massa.
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="sync_criterio" class="form-label">Critério de Migração *</label>
+                            <select class="form-select" id="sync_criterio" name="criterio" required>
+                                <option value="">Selecione o critério</option>
+                                <option value="todos">Todos os alunos de uma atividade</option>
+                                <option value="selecionados">Alunos específicos</option>
+                                <option value="filtro">Por filtros personalizados</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sync_atividade_destino" class="form-label">Atividade de Destino *</label>
+                            <select class="form-select" id="sync_atividade_destino" name="atividade_destino" required>
+                                <option value="">Selecione a atividade</option>
+                                {% for nome_atividade in atividades.keys() %}
+                                <option value="{{ nome_atividade }}">{{ nome_atividade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Campos condicionais -->
+                        <div class="col-12" id="sync_atividade_origem_container" style="display: none;">
+                            <label for="sync_atividade_origem" class="form-label">Atividade de Origem</label>
+                            <select class="form-select" id="sync_atividade_origem" name="atividade_origem">
+                                <option value="">Selecione a atividade de origem</option>
+                                {% for nome_atividade in atividades.keys() %}
+                                <option value="{{ nome_atividade }}">{{ nome_atividade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-12" id="sync_alunos_container" style="display: none;">
+                            <label class="form-label">Alunos Disponíveis</label>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                <div id="sync_lista_alunos">
+                                    <p class="text-muted">Selecione uma atividade para ver os alunos</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12" id="sync_filtros_container" style="display: none;">
+                            <label class="form-label">Filtros Personalizados</label>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="sync_filtro_turma" placeholder="Turma">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="sync_filtro_status" placeholder="Status">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="sync_filtro_atividade_atual" placeholder="Atividade Atual">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Atenção:</strong> Esta operação irá alterar a atividade dos alunos selecionados. Certifique-se de que esta é a ação desejada.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-sync-alt me-2"></i>
+                        Sincronizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gerenciar_atividades.js') }}"></script>
+<script>
+console.log('JavaScript carregado com sucesso');
+</script>
+{% endblock %}

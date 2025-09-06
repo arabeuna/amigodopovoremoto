@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block title %}{% if editando %}Editar Aluno{% else %}Novo Aluno{% endif %} - Associação Amigo do Povo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 text-center mb-4">
+                {% if editando %}
+                <i class="fas fa-user-edit text-primary"></i>
+                Editar Aluno
+                {% else %}
+                <i class="fas fa-user-plus text-primary"></i>
+                Cadastrar Novo Aluno
+                {% endif %}
+            </h1>
+            <p class="text-muted text-center">
+                {% if editando %}
+                Edite os dados do aluno {{ aluno.nome }}
+                {% else %}
+                Preencha os dados para cadastrar um novo aluno no sistema
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Formulário de Cadastro -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Dados do Aluno
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="formNovoAluno" method="POST" action="{% if editando %}{{ url_for('editar_aluno', aluno_id=aluno.id) }}{% else %}{{ url_for('cadastrar_aluno') }}{% endif %}" enctype="multipart/form-data">
+                        <!-- Informações Pessoais -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-user me-2"></i>
+                                    Informações Pessoais
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label">Nome Completo *</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{% if editando %}{{ aluno.nome }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="data_nascimento" class="form-label">Data de Nascimento *</label>
+                                <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{% if editando and aluno.data_nascimento %}{{ aluno.data_nascimento.strftime('%Y-%m-%d') if aluno.data_nascimento.strftime else aluno.data_nascimento }}{% endif %}" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00" value="{% if editando %}{{ aluno.cpf or '' }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="rg" class="form-label">RG</label>
+                                <input type="text" class="form-control" id="rg" name="rg" placeholder="00.000.000-0" value="{% if editando %}{{ aluno.rg or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="titulo_eleitor" class="form-label">Título de Eleitor</label>
+                                <input type="text" class="form-control" id="titulo_eleitor" name="titulo_eleitor" placeholder="0000.0000.0000" value="{% if editando %}{{ aluno.titulo_eleitor or '' }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="secao_eleitor" class="form-label">Seção</label>
+                                <input type="text" class="form-control" id="secao_eleitor" name="secao_eleitor" placeholder="0000" value="{% if editando %}{{ aluno.secao_eleitor or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="zona_eleitor" class="form-label">Zona Eleitoral</label>
+                                <input type="text" class="form-control" id="zona_eleitor" name="zona_eleitor" placeholder="000" value="{% if editando %}{{ aluno.zona_eleitor or '' }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="municipio_eleitor" class="form-label">Município Eleitoral</label>
+                                <input type="text" class="form-control" id="municipio_eleitor" name="municipio_eleitor" placeholder="Nome do município" value="{% if editando %}{{ aluno.municipio_eleitor or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="sexo" class="form-label">Sexo</label>
+                                <select class="form-select" id="sexo" name="sexo">
+                                    <option value="">Selecione</option>
+                                    <option value="M" {% if editando and aluno.sexo == 'M' %}selected{% endif %}>Masculino</option>
+                                    <option value="F" {% if editando and aluno.sexo == 'F' %}selected{% endif %}>Feminino</option>
+                                    <option value="O" {% if editando and aluno.sexo == 'O' %}selected{% endif %}>Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="estado_civil" class="form-label">Estado Civil</label>
+                                <select class="form-select" id="estado_civil" name="estado_civil">
+                                    <option value="">Selecione</option>
+                                    <option value="Solteiro" {% if editando and aluno.estado_civil == 'Solteiro' %}selected{% endif %}>Solteiro</option>
+                                    <option value="Casado" {% if editando and aluno.estado_civil == 'Casado' %}selected{% endif %}>Casado</option>
+                                    <option value="Divorciado" {% if editando and aluno.estado_civil == 'Divorciado' %}selected{% endif %}>Divorciado</option>
+                                    <option value="Viúvo" {% if editando and aluno.estado_civil == 'Viúvo' %}selected{% endif %}>Viúvo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Upload de Foto 3x4 -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="foto" class="form-label">Foto 3x4</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*" onchange="previewFoto(this)">
+                                <div class="form-text">Selecione uma foto 3x4 do aluno (JPG, PNG ou GIF)</div>
+                                <div class="foto-preview-container" style="margin-top: 10px;">
+                                    <img id="foto-preview" style="display: none; max-width: 120px; max-height: 160px; border: 1px solid #ddd; border-radius: 4px;" alt="Preview da foto">
+                                </div>
+                                {% if editando and aluno.foto %}
+                                    <div class="mt-2">
+                                        <img src="{{ url_for('static', filename='fotos/' + aluno.foto) }}" alt="Foto atual" class="img-thumbnail" style="max-width: 100px; max-height: 120px;">
+                                        <small class="text-muted d-block">Foto atual</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Informações de Contato -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-phone me-2"></i>
+                                    Informações de Contato
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="telefone" class="form-label">Telefone *</label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone" value="{% if editando %}{{ aluno.telefone or '' }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="celular" class="form-label">Celular</label>
+                                <input type="tel" class="form-control" id="celular" name="celular" value="{% if editando %}{{ aluno.celular or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{% if editando %}{{ aluno.email or '' }}{% endif %}" placeholder="exemplo@email.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whatsapp" class="form-label">WhatsApp</label>
+                                <input type="tel" class="form-control" id="whatsapp" name="whatsapp" value="{% if editando %}{{ aluno.whatsapp or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <!-- Endereço -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    Endereço
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-12">
+                                <label for="endereco" class="form-label">Endereço Completo</label>
+                                <input type="text" class="form-control" id="endereco" name="endereco" value="{% if editando %}{{ aluno.endereco or '' }}{% endif %}" placeholder="Rua, número, bairro, cidade">
+                            </div>
+                        </div>
+                            <div class="col-md-6">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="">Selecione</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Informações da Atividade -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-dumbbell me-2"></i>
+                                    Informações da Atividade
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="atividade" class="form-label">Atividade *</label>
+                                <select class="form-select" id="atividade" name="atividade" required>
+                                    <option value="">Selecione uma atividade</option>
+                                    <option value="Futebol" {% if editando and aluno.atividade == 'Futebol' %}selected{% endif %}>Futebol</option>
+                                    <option value="Vôlei" {% if editando and aluno.atividade == 'Vôlei' %}selected{% endif %}>Vôlei</option>
+                                    <option value="Basquete" {% if editando and aluno.atividade == 'Basquete' %}selected{% endif %}>Basquete</option>
+                                    <option value="Jiu-Jitsu" {% if editando and aluno.atividade == 'Jiu-Jitsu' %}selected{% endif %}>Jiu-Jitsu</option>
+                                    <option value="Capoeira" {% if editando and aluno.atividade == 'Capoeira' %}selected{% endif %}>Capoeira</option>
+                                    <option value="Musculação" {% if editando and aluno.atividade == 'Musculação' %}selected{% endif %}>Musculação</option>
+                                    <option value="Aeróbico" {% if editando and aluno.atividade == 'Aeróbico' %}selected{% endif %}>Aeróbico</option>
+                                    <option value="Dança" {% if editando and aluno.atividade == 'Dança' %}selected{% endif %}>Dança</option>
+                                    <option value="Yoga" {% if editando and aluno.atividade == 'Yoga' %}selected{% endif %}>Yoga</option>
+                                    <option value="Pilates" {% if editando and aluno.atividade == 'Pilates' %}selected{% endif %}>Pilates</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="turma" class="form-label">Turma/Horário *</label>
+                                <select class="form-select" id="turma" name="turma" required>
+                                    <option value="">Selecione uma turma</option>
+                                    <option value="Manhã" {% if editando and aluno.turma == 'Manhã' %}selected{% endif %}>Manhã</option>
+                                    <option value="Tarde" {% if editando and aluno.turma == 'Tarde' %}selected{% endif %}>Tarde</option>
+                                    <option value="Noite" {% if editando and aluno.turma == 'Noite' %}selected{% endif %}>Noite</option>
+                                    <option value="Sábado" {% if editando and aluno.turma == 'Sábado' %}selected{% endif %}>Sábado</option>
+                                    <option value="Domingo" {% if editando and aluno.turma == 'Domingo' %}selected{% endif %}>Domingo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="data_inicio" class="form-label">Data de Início *</label>
+                                <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{% if editando and aluno.data_inicio %}{{ aluno.data_inicio.strftime('%Y-%m-%d') if aluno.data_inicio.strftime else aluno.data_inicio }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status *</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Ativo" {% if editando and aluno.status == 'Ativo' %}selected{% elif not editando %}selected{% endif %}>Ativo</option>
+                                    <option value="Inativo" {% if editando and aluno.status == 'Inativo' %}selected{% endif %}>Inativo</option>
+                                    <option value="Suspenso" {% if editando and aluno.status == 'Suspenso' %}selected{% endif %}>Suspenso</option>
+                                    <option value="Transferido" {% if editando and aluno.status == 'Transferido' %}selected{% endif %}>Transferido</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Informações Adicionais -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Informações Adicionais
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="responsavel" class="form-label">Responsável (se menor de idade)</label>
+                                <input type="text" class="form-control" id="responsavel" name="responsavel" placeholder="Nome do responsável" value="{% if editando %}{{ aluno.responsavel or '' }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefone_responsavel" class="form-label">Telefone do Responsável</label>
+                                <input type="tel" class="form-control" id="telefone_responsavel" name="telefone_responsavel" value="{% if editando %}{{ aluno.telefone_responsavel or '' }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="indicacao" class="form-label">Indicação</label>
+                                <input type="text" class="form-control" id="indicacao" name="indicacao" placeholder="Como conheceu a academia" value="{% if editando %}{{ aluno.indicacao or '' }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes" name="observacoes" rows="2" placeholder="Observações adicionais">{% if editando %}{{ aluno.observacoes or '' }}{% endif %}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-lg btn-success">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% if editando %}Salvar Alterações{% else %}Cadastrar Aluno{% endif %}
+                                </button>
+                                {% if not editando %}
+                                <button type="button" class="btn btn-lg btn-secondary ms-3" onclick="limparFormulario()">
+                                    <i class="fas fa-eraser me-2"></i>
+                                    Limpar Formulário
+                                </button>
+                                {% endif %}
+                                <a href="{{ url_for('alunos') }}" class="btn btn-lg btn-outline-primary ms-3">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    {% if editando %}Cancelar{% else %}Voltar aos Alunos{% endif %}
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Máscaras para campos
+document.addEventListener('DOMContentLoaded', function() {
+    // Máscara para CPF
+    const cpfInput = document.getElementById('cpf');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Máscara para telefone
+    const telefoneInput = document.getElementById('telefone');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                } else {
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                }
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Máscara para CEP
+    const cepInput = document.getElementById('cep');
+    if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 8) {
+                value = value.replace(/(\d{5})(\d{3})/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Máscara para Título de Eleitor
+    const tituloEleitorInput = document.getElementById('titulo_eleitor');
+    if (tituloEleitorInput) {
+        tituloEleitorInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 12) {
+                value = value.replace(/(\d{4})(\d{4})(\d{4})/, '$1.$2.$3');
+                e.target.value = value;
+            }
+        });
+    }
+
+    // Definir data atual como padrão para data de início
+    const dataInicioInput = document.getElementById('data_inicio');
+    if (dataInicioInput) {
+        const hoje = new Date().toISOString().split('T')[0];
+        dataInicioInput.value = hoje;
+    }
+});
+
+// Buscar endereço pelo CEP
+const cepInput = document.getElementById('cep');
+if (cepInput) {
+    cepInput.addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+        if (cep.length === 8) {
+            buscarCep(cep);
+        }
+    });
+}
+
+function buscarCep(cep) {
+    fetch('https://viacep.com.br/ws/' + cep + '/json/')
+        .then(response => response.json())
+        .then(function(data) {
+            if (!data.erro) {
+                document.getElementById('logradouro').value = data.logradouro;
+                document.getElementById('bairro').value = data.bairro;
+                document.getElementById('cidade').value = data.localidade;
+                document.getElementById('estado').value = data.uf;
+            }
+        })
+        .catch(function(error) {
+            console.error('Erro ao buscar CEP:', error);
+        });
+}
+
+// Validação do formulário
+const formNovoAluno = document.getElementById('formNovoAluno');
+if (formNovoAluno) {
+    formNovoAluno.addEventListener('submit', function(e) {
+        // Validações básicas
+        const nome = document.getElementById('nome').value.trim();
+        const dataNascimento = document.getElementById('data_nascimento').value;
+        const telefone = document.getElementById('telefone').value.trim();
+        const atividade = document.getElementById('atividade').value;
+        const turma = document.getElementById('turma').value;
+        const status = document.getElementById('status').value;
+        const foto = document.getElementById('foto').files[0];
+        
+        if (!nome || !dataNascimento || !telefone || !atividade || !turma || !status) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios marcados com *');
+            return;
+        }
+        
+        // Validar data de nascimento
+        const hoje = new Date();
+        const nascimento = new Date(dataNascimento);
+        const idade = hoje.getFullYear() - nascimento.getFullYear();
+        
+        if (idade < 5 || idade > 100) {
+            e.preventDefault();
+            alert('A data de nascimento parece incorreta. Verifique.');
+            return;
+        }
+        
+        // Validar foto se fornecida
+        if (foto) {
+            const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            const tamanhoMaximo = 5 * 1024 * 1024; // 5MB
+            
+            if (!tiposPermitidos.includes(foto.type)) {
+                e.preventDefault();
+                alert('Tipo de arquivo não permitido. Use apenas JPG, PNG ou GIF.');
+                return;
+            }
+            
+            if (foto.size > tamanhoMaximo) {
+                e.preventDefault();
+                alert('Arquivo muito grande. O tamanho máximo é 5MB.');
+                return;
+            }
+        }
+        
+        // Se chegou até aqui, o formulário é válido e será enviado normalmente
+        console.log('Formulário válido, enviando dados...');
+    });
+}
+
+// Limpar formulário
+function limparFormulario() {
+    const form = document.getElementById('formNovoAluno');
+    if (form) {
+        form.reset();
+    }
+    
+    // Definir data atual como padrão
+    const hoje = new Date().toISOString().split('T')[0];
+    const dataInicioInput = document.getElementById('data_inicio');
+    if (dataInicioInput) {
+        dataInicioInput.value = hoje;
+    }
+    
+    // Limpar preview da foto
+    const preview = document.getElementById('foto-preview');
+    if (preview) {
+        preview.style.display = 'none';
+        preview.src = '';
+    }
+    
+    alert('Formulário limpo com sucesso!');
+}
+
+// Função para pré-visualizar a foto
+function previewFoto(input) {
+    const preview = document.getElementById('foto-preview');
+    const file = input.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+        preview.src = '';
+    }
+}
+</script>
+{% endblock %}

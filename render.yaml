@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: associacao-amigo-do-povo
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: MONGO_USERNAME
+        value: amigodopovoassociacao_db_user
+      - key: MONGO_PASSWORD
+        value: Lp816oHvdl2nHVeO
+      - key: MONGO_CLUSTER
+        value: cluster0.ifuorpv.mongodb.net
+      - key: MONGO_DATABASE
+        value: amigodopovoassociacao_db
+      - key: MONGO_URI
+        value: mongodb+srv://amigodopovoassociacao_db_user:Lp816oHvdl2nHVeO@cluster0.ifuorpv.mongodb.net/amigodopovoassociacao_db?retryWrites=true&w=majority&appName=Cluster0
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: False
+    autoDeploy: true
+    healthCheckPath: /health
